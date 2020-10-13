@@ -1,8 +1,10 @@
+pub mod circle;
 pub mod line;
 pub mod point;
 
 #[cfg(test)]
 mod tests {
+    use crate::circle;
     use crate::line;
     use crate::point;
     #[test]
@@ -43,10 +45,27 @@ mod tests {
         let line = line::Line::new(point::Point::new(0, 45), point::Point::new(1, 0));
         assert_eq!(line.theta(), -1.5485777614681775_f64);
     }
+    #[test]
+    fn new_circle() {
+        let c = circle::Circle::new(1f64);
+        assert_eq!(c.radius, 1f64);
+    }
+    #[test]
+    fn circumference() {
+        let c = circle::Circle::new(1 as f64);
+        assert_eq!(
+            c.circumference(),
+            2 as f64 * c.radius * std::f64::consts::PI
+        )
+    }
+    #[test]
+    fn area() {
+        let c = circle::Circle::new(1 as f64);
+        assert_eq!(std::f64::consts::PI * c.radius.powi(2), c.area())
+    }
 }
 
 pub mod utils {
-    #[allow(dead_code)]
     /// Returns the signed difference between the x2 and x1 coordinate
     ///
     /// # Arguments
@@ -55,33 +74,12 @@ pub mod utils {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::utils::delta_x;
-    /// let p1 = Point::new(0,10);
-    /// let p2 = Point::new(0,9);
-    /// delta_x(p2.x, p1.x);
+    /// use vectorize::utils::delta_coord;
+    /// let (x1, x2) = (20, 10);
+    /// delta_coord(x2, x1);
     ///```
     ///
-    pub fn delta_x(x2: isize, x1: isize) -> isize {
+    pub fn delta_coord(x2: isize, x1: isize) -> isize {
         x2 - x1
-    }
-    #[allow(dead_code)]
-    /// Returns the signed difference between the y2 and y1 coordinate
-    ///
-    /// # Arguments
-    /// * `y2` - The y coordinate of the final/end point.
-    /// * `y1` - The y coordinate of the start/initial point.
-    ///
-    /// # Examples
-    /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::utils::delta_y;
-    /// let p1 = Point::new(0,10);
-    /// let p2 = Point::new(0,9);
-    /// delta_y(p2.y, p1.y);
-    ///```
-    ///
-    pub fn delta_y(y2: isize, y1: isize) -> isize {
-        y2 - y1
     }
 }

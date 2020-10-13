@@ -17,7 +17,6 @@ impl fmt::Display for Point {
   }
 }
 impl Point {
-  #[allow(dead_code)]
   /// Returns a new instance of 2D Point
   ///
   /// # Arguments
@@ -30,7 +29,6 @@ impl Point {
   pub fn new(x: isize, y: isize) -> Point {
     Point { x, y }
   }
-  #[allow(dead_code)]
   /// Returns a point at the origin
   ///
   /// ```
