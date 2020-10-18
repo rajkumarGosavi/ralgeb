@@ -126,6 +126,13 @@ impl Matrix {
   }
   /// Multiplies a row of matrix with a scalar value
   pub fn scalar_row_mul(mut self, row_num: usize, scalar: f64) -> Result<Matrix, MatrixError> {
+    if scalar == 0.0 {
+      return Err(MatrixError {
+        reason: ErrorCause {
+          cause: format!("The should be non-zero"),
+        },
+      });
+    }
     if row_num <= self.rows {
       self.mat[row_num] = self.mat[row_num].iter().map(|x| x * scalar).collect();
       Ok(Matrix {
@@ -138,6 +145,93 @@ impl Matrix {
         reason: ErrorCause {
           cause: format!("The row {} does not exists", row_num),
         },
+      })
+    }
+  }
+
+  pub fn add(m1: &Matrix, m2: &Matrix) -> Result<Matrix, MatrixError> {
+    if m1.rows == m2.rows && m1.cols == m2.cols {
+      let mut res = Matrix::new(m1.rows, m1.cols);
+      let mut i = 0;
+      while i < m2.rows {
+        let mut j = 0;
+        while j < m2.cols {
+          res.mat[i][j] = m1.mat[i][j] + m2.mat[i][j];
+          j += 1;
+        }
+        i += 1;
+      }
+      Ok(res)
+    } else {
+      Err(MatrixError {
+        reason: ErrorCause {
+          cause: format!(
+            "The dimensions are different. Row Diff: {}, Col Diff: {}",
+            (m1.rows as isize - m2.rows as isize).abs(),
+            (m1.cols as isize - m2.cols as isize).abs()
+          ),
+        },
+      })
+    }
+  }
+  pub fn subtract(m1: &Matrix, m2: &Matrix) -> Result<Matrix, MatrixError> {
+    if m1.rows == m2.rows && m1.cols == m2.cols {
+      let mut res = Matrix::new(m1.rows, m1.cols);
+      let mut i = 0;
+      while i < m2.rows {
+        let mut j = 0;
+        while j < m2.cols {
+          res.mat[i][j] = m1.mat[i][j] - m2.mat[i][j];
+          j += 1;
+        }
+        i += 1;
+      }
+      Ok(res)
+    } else {
+      Err(MatrixError {
+        reason: ErrorCause {
+          cause: format!(
+            "The dimensions are different. Row Diff: {}, Col Diff: {}",
+            (m1.rows as isize - m2.rows as isize).abs(),
+            (m1.cols as isize - m2.cols as isize).abs()
+          ),
+        },
+      })
+    }
+  }
+  pub fn transpose(m: Matrix) -> Matrix {
+    let mut c = 0;
+    let mut mat = Matrix::new(m.cols, m.rows);
+    while m.cols > c {
+      let mut r = 0;
+      let mut v: Vec<f64> = Vec::new();
+      while m.rows > r {
+        v.push(m.mat[r][c]);
+        r += 1;
+      }
+
+      mat = mat.replace_row(c, v).unwrap();
+      c += 1;
+    }
+    mat
+  }
+  pub fn scalar_mat_mul(mut self, scalar: f64) -> Result<Matrix, MatrixError> {
+    if scalar == 0.0 {
+      Err(MatrixError {
+        reason: ErrorCause {
+          cause: format!("The should be non-zero"),
+        },
+      })
+    } else {
+      let mut r = 0;
+      while r < self.rows {
+        self = self.scalar_row_mul(r, scalar)?;
+        r += 1;
+      }
+      Ok(Matrix {
+        rows: self.rows,
+        cols: self.cols,
+        mat: (*self.mat).to_vec(),
       })
     }
   }
@@ -223,5 +317,57 @@ mod tests {
     }
     let m = matrix::Matrix::new(4, 3);
     assert_eq!(m.get_principal().is_err(), true);
+  }
+  #[test]
+  fn add_matrix() {
+    let m1 = matrix::Matrix::identity(4, 4).unwrap();
+    let m2 = matrix::Matrix::identity(4, 4).unwrap();
+    match matrix::Matrix::add(&m1, &m2) {
+      Ok(r) => match r.get_principal() {
+        Ok(v) => assert_eq!(v, vec![2., 2., 2., 2.]),
+        Err(_) => return,
+      },
+      Err(_) => return,
+    }
+  }
+  #[test]
+  fn subtract_matrix() {
+    let m1 = matrix::Matrix::identity(4, 4).unwrap();
+    let m2 = matrix::Matrix::identity(4, 4).unwrap();
+    match matrix::Matrix::subtract(&m1, &m2) {
+      Ok(r) => match r.get_principal() {
+        Ok(v) => assert_eq!(v, vec![0.; 4]),
+        Err(_) => return,
+      },
+      Err(_) => return,
+    }
+  }
+  #[test]
+  fn transpose() {
+    let mut m = matrix::Matrix::new(3, 2);
+    m = m.replace_row(0, vec![1., 2.]).unwrap();
+    m = m.replace_row(1, vec![3., 4.]).unwrap();
+    m = m.replace_row(2, vec![5., 6.]).unwrap();
+    m = matrix::Matrix::transpose(m);
+    let mut m2 = matrix::Matrix::new(2, 3);
+    m2 = m2.replace_row(0, vec![1., 3., 5.]).unwrap();
+    m2 = m2.replace_row(1, vec![2., 4., 6.]).unwrap();
+    assert_eq!(m.cols, m2.cols);
+    assert_eq!(m.rows, m2.rows);
+    assert_eq!(m.mat, m2.mat);
+  }
+  #[test]
+  fn scalar_mat_mul() {
+    let m = matrix::Matrix::identity(3, 3).unwrap();
+    assert_eq!(m.scalar_mat_mul(0.).is_err(), true);
+    let m = matrix::Matrix::identity(3, 3).unwrap();
+    let mut t = matrix::Matrix::new(3, 3);
+    t = t.replace_row(0, vec![4., 0., 0.]).unwrap();
+    t = t.replace_row(1, vec![0., 4., 0.]).unwrap();
+    t = t.replace_row(2, vec![0., 0., 4.]).unwrap();
+    match m.scalar_mat_mul(4.) {
+      Ok(r) => assert_eq!(r.mat, t.mat),
+      Err(_) => return,
+    }
   }
 }
