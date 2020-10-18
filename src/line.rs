@@ -40,3 +40,33 @@ impl Line {
     del_y.atan2(del_x)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use crate::line;
+  use crate::point;
+  #[test]
+  fn new_line() {
+    let line = line::Line::new(point::Point::new(0, 0), point::Point::new(1, 1));
+    print!("{:?}, {:?}", line.point1, line.point2);
+  }
+  #[test]
+  fn line_length() {
+    let line = line::Line::new(point::Point::new(0, 0), point::Point::new(1, 1));
+    assert_eq!(line.length(), 1.4142135623730951 as f64);
+  }
+  #[test]
+  fn slope() {
+    let line = line::Line::new(point::Point::new(0, 0), point::Point::new(1, 1));
+    assert_eq!(line.slope(), 1 as f64);
+    let line = line::Line::new(point::Point::new(0, 0), point::Point::new(1, 2));
+    assert_eq!(line.slope(), 2 as f64);
+  }
+  #[test]
+  fn theta() {
+    let line = line::Line::new(point::Point::new(0, 0), point::Point::new(1, 1));
+    assert_eq!(line.theta(), 0.7853981633974483_f64);
+    let line = line::Line::new(point::Point::new(0, 45), point::Point::new(1, 0));
+    assert_eq!(line.theta(), -1.5485777614681775_f64);
+  }
+}

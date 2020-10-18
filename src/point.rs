@@ -39,3 +39,22 @@ impl Point {
     Point::new(0, 0)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use crate::point;
+  #[test]
+  fn point_new() {
+    let pt = point::Point::new(10, 20);
+    let pt2 = point::Point { x: 10, y: 20 };
+    assert_eq!(pt.x, pt2.x);
+    assert_eq!(pt.y, pt2.y);
+  }
+  #[test]
+  fn get_origin() {
+    let origin = point::Point::get_origin_point();
+    let pt2 = point::Point::new(0, 0);
+    assert_eq!(origin.x, pt2.x);
+    assert_eq!(origin.y, pt2.y);
+  }
+}
