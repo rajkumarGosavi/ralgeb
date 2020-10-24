@@ -48,7 +48,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     /// let m = Matrix::new(3, 4);
     /// ```
     pub fn new(rows: usize, cols: usize) -> Matrix {
@@ -77,7 +77,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     /// let m = match Matrix::identity(3, 3) {
     /// Some(m) => m,
     /// None => Matrix::new(3,3),
@@ -106,7 +106,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     /// let m = Matrix::new(3,3);
     /// assert_eq!(m.is_square(), true);
     /// ```
@@ -121,7 +121,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     /// let m = Matrix::new(3,3);
     /// match m.get_principal() {
     ///  Ok(m) => assert_eq!(m, vec![0.,0.,0.]),
@@ -160,7 +160,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let m = Matrix::new(3,4);
     /// let m = match m.replace_row(0, vec![1.,2.,3.,4.]) {
@@ -196,12 +196,13 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let m = Matrix::new(3,4);
     /// let m = match m.scalar_row_mul(2, 7.) {
     /// Ok(m) => m,
     /// Err(e) => panic!(e),
+    ///
     /// };
     /// ```
     pub fn scalar_row_mul(mut self, row_num: usize, scalar: f64) -> Result<Matrix, MatrixError> {
@@ -236,7 +237,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let m1 = Matrix::new(3,3);
     /// let m2 = Matrix::identity(3,3).unwrap();
@@ -278,7 +279,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let m1 = Matrix::new(3,3);
     /// let m2 = Matrix::identity(3,3).unwrap();
@@ -316,7 +317,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let mut m = Matrix::identity(3,3).unwrap();
     /// m = Matrix::transpose(m);
@@ -345,7 +346,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     ///
     /// let m = Matrix::identity(3,3).unwrap();
     /// let m = match m.scalar_mat_mul(7.) {
@@ -380,7 +381,7 @@ impl Matrix {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::matrix::Matrix;
+    /// use ralgeb::matrix::Matrix;
     /// let m = Matrix::new(3,4);
     /// let row2 = match m.get_row(2) {
     ///   Ok(r) => r,
@@ -396,6 +397,86 @@ impl Matrix {
             })
         } else {
             Ok(self.mat[row_num].to_owned())
+        }
+    }
+
+    /// Multiplies two matrices and return the resultant matrix
+    /// # Arguments
+    /// `m1` - Matrix 1
+    /// `m2` - Matrix 2
+    ///
+    /// # Examples
+    /// ```
+    /// use ralgeb::matrix::Matrix;
+    /// let m1 = Matrix::new(3,4);
+    /// let mut m2 = Matrix::new(4,2);
+    /// m2 = m2.replace_row(0, vec![1.,2.]).unwrap();
+    /// let result = Matrix::multiply(&m1,&m2).unwrap();
+    /// assert_eq!(result.rows, 3);
+    /// assert_eq!(result.cols, 2);
+    /// ```
+    ///
+    pub fn multiply(m1: &Matrix, m2: &Matrix) -> Result<Matrix, MatrixError> {
+        if m1.cols != m2.rows {
+            return Err(MatrixError{reason: ErrorCause{cause: format!("The multiplication cannot be performed. The columns of matrix1 {} should be equal to rows of matrix2 {}", m1.cols, m2.rows)}});
+        }
+        let mut result = Matrix::new(m1.rows, m2.cols);
+
+        for i in 0..m1.rows {
+            for j in 0..m2.cols {
+                result.mat[i][j] = Matrix::dot_product(&m1.mat[i], &m2.get_col(j));
+            }
+        }
+        Ok(result)
+    }
+    /// Returns a column from a matrix as a Vector
+    ///
+    /// # Arguments
+    /// `col_num` - The column number to be reeturned (0 indexed)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ralgeb::matrix::Matrix;
+    ///
+    /// let m = Matrix::identity(3, 3).unwrap();
+    /// assert_eq!(m.get_col(2), vec![0.,0.,1.]);
+    /// ```
+    pub fn get_col(&self, col_num: usize) -> Vec<f64> {
+        let mut c: Vec<f64> = vec![];
+        if col_num >= self.cols {
+            vec![0.; self.cols]
+        } else {
+            for r in self.mat.iter() {
+                c.push(r[col_num])
+            }
+            c
+        }
+    }
+    /// Returns the dot product of 2 vectors.
+    /// v1 and v2 should have same length
+    /// # Arguments
+    /// `v1` - Vector 1 of length n
+    /// `v2` - Vector 2 of length n
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ralgeb::matrix::Matrix;
+    /// let v1 = vec![1.,2.,3.];
+    /// let v2 = vec![1.,2.,3.];
+    /// assert_eq!(Matrix::dot_product(&v1, &v2), 14.);
+    /// ```
+    ///
+    pub fn dot_product(v1: &Vec<f64>, v2: &Vec<f64>) -> f64 {
+        if v1.len() != v2.len() {
+            0.
+        } else {
+            let mut result = 0.;
+            for i in 0..v1.len() {
+                result += v1[i] * v2[i];
+            }
+            result
         }
     }
 }
@@ -543,5 +624,23 @@ mod tests {
         }
 
         assert_eq!(m.get_row(3).is_err(), true);
+    }
+
+    #[test]
+    fn multiply() {
+        let m1 = matrix::Matrix::identity(3, 3).unwrap();
+        let mut m2 = matrix::Matrix::new(3, 2);
+        m2 = m2.replace_row(0, vec![1., 2.]).unwrap();
+        let result = matrix::Matrix::multiply(&m1, &m2).unwrap();
+        assert_eq!(result.rows, 3);
+        assert_eq!(result.cols, 2);
+        assert_eq!(result.get_row(0).unwrap(), vec![1., 2.]);
+        assert_eq!(result.get_row(1).unwrap(), vec![0., 0.]);
+        assert_eq!(result.get_row(2).unwrap(), vec![0., 0.]);
+        println!("Final : {:?}", result.mat);
+
+        let m1 = matrix::Matrix::identity(3, 3).unwrap();
+        let m2 = matrix::Matrix::new(2, 2);
+        assert_eq!(matrix::Matrix::multiply(&m1, &m2).is_err(), true);
     }
 }
