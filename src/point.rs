@@ -23,7 +23,7 @@ impl Point {
     /// * `x` - The x coordinate of the point
     /// * `y` - The y coordinate of the point
     /// ```
-    /// use vectorize::point::Point;
+    /// use ralgeb::point::Point;
     /// let pt = Point::new(1., 1.);
     /// ```
     pub fn new(x: f64, y: f64) -> Point {
@@ -32,7 +32,7 @@ impl Point {
     /// Returns a point at the origin
     ///
     /// ```
-    /// use vectorize::point::Point;
+    /// use ralgeb::point::Point;
     /// let pt = Point::get_origin_point();
     /// ```
     pub fn get_origin_point() -> Point {

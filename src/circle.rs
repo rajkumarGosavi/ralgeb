@@ -15,8 +15,8 @@ impl Circle {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::circle::Circle;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::circle::Circle;
     /// let c = Circle::new(2., Point{x: 3.,y: -4.});
     /// ```
     pub fn new(r: f64, centre: Point) -> Circle {
@@ -27,8 +27,8 @@ impl Circle {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::circle::Circle;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::circle::Circle;
     /// let c = Circle::new(2., Point{x: 3.,y: -4.});
     /// assert_eq!(c.circumference(), 2. * 2. * std::f64::consts::PI);
     /// ```
@@ -39,8 +39,8 @@ impl Circle {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::circle::Circle;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::circle::Circle;
     /// let c = Circle::new(2., Point{x: 3.,y: -4.});
     /// assert_eq!(c.area(), std::f64::consts::PI * (2 as f64).powi(2));
     /// ```

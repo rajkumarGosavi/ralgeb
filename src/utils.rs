@@ -6,7 +6,7 @@
 ///
 /// # Examples
 /// ```
-/// use vectorize::utils::delta_coord;
+/// use ralgeb::utils::delta_coord;
 /// let (x1, x2) = (20., 10.);
 /// delta_coord(x2, x1);
 ///```

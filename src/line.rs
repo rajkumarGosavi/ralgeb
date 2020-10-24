@@ -22,8 +22,8 @@ impl Line {
     ///
     /// # Examples
     ///```
-    /// use vectorize::point::Point;
-    /// use vectorize::line::Line;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::line::Line;
     /// let l = Line::new(Point{x: 1., y: 2.}, Point{x: 3., y: -4.});
     /// ```
     pub fn new(p1: Point, p2: Point) -> Line {
@@ -36,8 +36,8 @@ impl Line {
     ///
     /// # Examples
     ///```
-    /// use vectorize::point::Point;
-    /// use vectorize::line::Line;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::line::Line;
     /// let l = Line::new(Point{x: 1., y: 2.}, Point{x: 3., y: -4.});
     /// let len = l.length();
     /// assert_eq!(len, f64::sqrt(40.));
@@ -54,8 +54,8 @@ impl Line {
     /// # Examples
     ///
     ///```
-    /// use vectorize::point::Point;
-    /// use vectorize::line::Line;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::line::Line;
     /// let l = Line::new(Point{x:1., y: 2.}, Point{x:3., y: -4.});
     /// assert_eq!(l.slope(), -3.);
     /// ```
@@ -69,8 +69,8 @@ impl Line {
     ///
     /// # Examples
     /// ```
-    /// use vectorize::point::Point;
-    /// use vectorize::line::Line;
+    /// use ralgeb::point::Point;
+    /// use ralgeb::line::Line;
     /// let l = Line::new(Point{x: 1., y: 2.}, Point{x: 3., y: -4.});
     /// assert_eq!(l.theta(), -1.2490457723982544);
     /// ```
@@ -99,6 +99,7 @@ mod tests {
         let line = line::Line::new(point::Point::new(0., 0.), point::Point::new(1., 1.));
         assert_eq!(line.length(), 1.4142135623730951);
     }
+
     #[test]
     fn slope() {
         let line = line::Line::new(point::Point::new(0., 0.), point::Point::new(1., 1.));
