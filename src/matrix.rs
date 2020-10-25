@@ -55,7 +55,7 @@ impl Matrix {
         let mut r = 0;
         let mut outer_vec: Vec<Vec<f64>> = Vec::new();
         loop {
-            let inner_vec: Vec<f64> = vec![0.0; cols];
+            let inner_vec: Vec<f64> = vec![0.; cols];
             if r >= rows {
                 break Matrix {
                     rows: outer_vec.len(),
@@ -67,6 +67,36 @@ impl Matrix {
             r += 1;
         }
     }
+    /// Creates a Matrix instance from a given Vector of vector
+    /// if the vector does not have elements then a simply
+    /// 3x3 matrix with all elements as 0.0
+    ///
+    /// # Arguments
+    /// `matrix` - A vector of vector with element type as f64
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ralgeb::matrix::Matrix;
+    /// let mut v: Vec<Vec<f64>> = Vec::new();
+    /// v.push(vec![1.,2.,3.]);
+    /// v.push(vec![4.,5.,6.]);
+    /// v.push(vec![7.,8.,9.]);
+    /// let m = Matrix::new_mat(v);
+    /// ```
+    ///
+    pub fn new_mat(v: Vec<Vec<f64>>) -> Matrix {
+        if v.len() <= 0 {
+            Matrix::new(3, 3)
+        } else {
+            Matrix {
+                rows: v.len(),
+                cols: v[0].len(),
+                mat: v,
+            }
+        }
+    }
+    ///
     /// Returns an Identity matrix
     /// Identity matrix are always square matrix
     /// with same number of rows and columns
@@ -637,10 +667,21 @@ mod tests {
         assert_eq!(result.get_row(0).unwrap(), vec![1., 2.]);
         assert_eq!(result.get_row(1).unwrap(), vec![0., 0.]);
         assert_eq!(result.get_row(2).unwrap(), vec![0., 0.]);
-        println!("Final : {:?}", result.mat);
 
         let m1 = matrix::Matrix::identity(3, 3).unwrap();
         let m2 = matrix::Matrix::new(2, 2);
         assert_eq!(matrix::Matrix::multiply(&m1, &m2).is_err(), true);
+    }
+
+    #[test]
+    fn new_mat() {
+        let mut v: Vec<Vec<f64>> = Vec::new();
+        v.push(vec![1., 2., 3.]);
+        v.push(vec![4., 5., 6.]);
+        v.push(vec![7., 8., 9.]);
+        v.push(vec![10., 11., 12.]);
+        let m = matrix::Matrix::new_mat(v);
+        assert_eq!(m.rows, 4);
+        assert_eq!(m.cols, 3);
     }
 }
