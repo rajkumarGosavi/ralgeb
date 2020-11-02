@@ -1,4 +1,5 @@
 pub mod circle;
+pub mod combinatorics;
 pub mod line;
 pub mod matrix;
 pub mod point;
