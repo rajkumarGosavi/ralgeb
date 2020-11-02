@@ -8,3 +8,4 @@ Supports
 and
 
 - Matrix
+- Combinatorics
